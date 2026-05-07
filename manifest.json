@@ -1,0 +1,9 @@
+{
+  "name": "Dashboard de Baterias",
+  "short_name": "Baterias",
+  "start_url": "./dashboard.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait"
+}
