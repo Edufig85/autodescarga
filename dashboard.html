@@ -4,45 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0f172a">
 
   <title>Dashboard de Baterias</title>
 
-  manifest.json
-  .jsdelivr.net/npm/chart.js"></script>
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    *{margin:0;padding:0;box-sizing:border-box}
     body{
       font-family:Arial,Helvetica,sans-serif;
       background:#0f172a;
-      color:white;
-      padding:env(safe-area-inset-top) 15px env(safe-area-inset-bottom);
-      min-height:100vh;
+      color:#fff;
+      padding:20px;
     }
-    .container{max-width:1400px;margin:auto;}
-    .header{text-align:center;margin-bottom:25px;}
-    .header h1{font-size:2rem;margin-bottom:10px;}
-    .header p{color:#cbd5e1;}
+    .container{max-width:1200px;margin:auto}
+    h1{text-align:center;margin-bottom:5px}
+    p{text-align:center;color:#cbd5e1;margin-bottom:30px}
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-      gap:18px;
+    .panel,.card{
+      background:#1e293b;
+      border-radius:18px;
+      padding:20px;
       margin-bottom:20px;
     }
-
-    .card,.panel{
-      background:#1e293b;
-      padding:22px;
-      border-radius:22px;
-      box-shadow:0 10px 25px rgba(0,0,0,.25);
-    }
-
-    .card h2{font-size:1rem;margin-bottom:12px;color:#93c5fd;}
-    .value{font-size:2rem;font-weight:bold;}
 
     .inputs{
       display:grid;
@@ -50,64 +39,45 @@
       gap:15px;
     }
 
-    label{color:#cbd5e1;}
+    label{color:#cbd5e1}
     input{
-      padding:15px;
-      font-size:16px;
+      width:100%;
+      padding:14px;
+      border-radius:12px;
       border:none;
-      border-radius:14px;
       background:#334155;
-      color:white;
+      color:#fff;
+      font-size:16px;
     }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:15px;
+    }
+
+    .card h2{font-size:0.95rem;color:#93c5fd;margin-bottom:10px}
+    .value{font-size:1.8rem;font-weight:bold}
 
     .status{
-      padding:20px;
       text-align:center;
-      border-radius:18px;
-      font-size:1.3rem;
-      font-weight:bold;
-      margin-bottom:20px;
-    }
-
-    .ok{
-      background:#123524;
-      color:#5eff9d;
-      border:2px solid #5eff9d;
-    }
-    .danger{
-      background:#4a1616;
-      color:#ff8f8f;
-      border:2px solid #ff8f8f;
-    }
-
-    .chart-container{height:400px;}
-    table{width:100%;border-collapse:collapse;}
-    th,td{
-      padding:12px;
-      border-bottom:1px solid #334155;
-      text-align:center;
-    }
-    th{background:#0f172a;}
-
-    .badge{
-      padding:6px 14px;
-      border-radius:999px;
+      padding:18px;
+      border-radius:16px;
+      font-size:1.2rem;
       font-weight:bold;
     }
-    .green{background:#14532d;color:#86efac;}
-    .red{background:#7f1d1d;color:#fca5a5;}
+    .ok{background:#123524;color:#5eff9d}
+    .danger{background:#4a1616;color:#ff9b9b}
 
-    .footer{text-align:center;color:#94a3b8;margin-top:20px;}
+    .chart-container{height:380px}
   </style>
 </head>
 
 <body>
 <div class="container">
 
-  <div class="header">
-    <h1>Dashboard Inteligente de Baterias</h1>
-    <p>iOS • Android • Windows • macOS</p>
-  </div>
+  <h1>Dashboard Inteligente de Baterias</h1>
+  <p>iOS • Android • Windows • macOS</p>
 
   <div class="panel">
     <div class="inputs">
@@ -123,70 +93,99 @@
   </div>
 
   <div class="grid">
-    <div class="card"><h2>Dias sem carga</h2><div id="dias" class="value">0</div></div>
-    <div class="card"><h2>Tensão mínima esperada</h2><div id="tensaoMinima" class="value">0V</div></div>
-    <div class="card"><h2>Tensão informada</h2><div id="tensaoDigitada" class="value">0V</div></div>
-    <div class="card"><h2>Status</h2><div id="resultado" class="value">---</div></div>
+    <div class="card">
+      <h2>Dias sem carga</h2>
+      <div class="value" id="dias">0</div>
+    </div>
+    <div class="card">
+      <h2>Tensão mínima esperada</h2>
+      <div class="value" id="tensaoMinima">0V</div>
+    </div>
+    <div class="card">
+      <h2>Tensão informada</h2>
+      <div class="value" id="tensaoDigitada">0V</div>
+    </div>
+    <div class="card">
+      <h2>Status</h2>
+      <div class="value" id="resultado">---</div>
+    </div>
   </div>
 
-  <div id="statusBox" class="status ok">Preencha os dados acima.</div>
+  <div id="statusBox" class="status ok" style="margin-bottom:25px">
+    Preencha os dados acima.
+  </div>
 
   <div class="panel">
-    <h2>Gráfico de Autodescarga</h2>
+    <h2 style="margin-bottom:15px">Gráfico de Autodescarga</h2>
     <div class="chart-container">
       <canvas id="grafico"></canvas>
     </div>
   </div>
 
-  <div class="footer">Funciona offline como PWA</div>
 </div>
 
 <script>
-const dados=[
-  {dias:0,t:13.01},{dias:30,t:12.42},{dias:60,t:12.28},{dias:90,t:12.20},
-  {dias:120,t:12.10},{dias:150,t:11.91},{dias:180,t:11.72}
+/* ==========================
+   PLANILHA DE REFERÊNCIA
+   ========================== */
+const tabelaReferencia = [
+  { dias: 0,   tensao: 13.01 },
+  { dias: 30,  tensao: 12.42 },
+  { dias: 60,  tensao: 12.28 },
+  { dias: 90,  tensao: 12.20 },
+  { dias: 120, tensao: 12.10 },
+  { dias: 150, tensao: 11.91 },
+  { dias: 180, tensao: 11.72 },
+  { dias: 210, tensao: 11.61 },
+  { dias: 240, tensao: 11.42 },
+  { dias: 270, tensao: 11.22 }
 ];
 
-new Chart(grafico,{
-  type:'line',
-  data:{
-    labels:dados.map(d=>d.dias),
-    datasets:[{
-      label:'Tensão mínima',
-      data:dados.map(d=>d.t),
-      borderWidth:4,
-      tension:.4,
-      fill:true
+/* ==========================
+   GRÁFICO
+   ========================== */
+new Chart(document.getElementById('grafico'), {
+  type: 'line',
+  data: {
+    labels: tabelaReferencia.map(i => i.dias),
+    datasets: [{
+      label: 'Tensão mínima (V)',
+      data: tabelaReferencia.map(i => i.tensao),
+      borderWidth: 3,
+      tension: 0.4,
+      fill: true
     }]
   },
-  options:{maintainAspectRatio:false}
+  options: {
+    responsive: true,
+    maintainAspectRatio: false
+  }
 });
 
+/* ==========================
+   ATUALIZAÇÃO AUTOMÁTICA
+   ========================== */
 function atualizarDashboard() {
-  const dataInput = document.getElementById('dataCarga').value;
-  const tensaoInput = parseFloat(document.getElementById('tensaoAtual').value);
-
-  if (!dataInput || isNaN(tensaoInput)) return;
+  const data = document.getElementById('dataCarga').value;
+  const tensao = parseFloat(document.getElementById('tensaoAtual').value);
+  if (!data || isNaN(tensao)) return;
 
   const hoje = new Date();
-  const dataCarga = new Date(dataInput + 'T00:00:00');
-  const diferenca = hoje - dataCarga;
-  const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+  const ultimaCarga = new Date(data + 'T00:00:00');
+  const dias = Math.floor((hoje - ultimaCarga) / 86400000);
 
-  const referencia = dados.reduce((a, b) =>
+  const referencia = tabelaReferencia.reduce((a, b) =>
     Math.abs(b.dias - dias) < Math.abs(a.dias - dias) ? b : a
   );
 
-  const minimo = referencia.t;
-
   document.getElementById('dias').innerText = dias;
-  document.getElementById('tensaoMinima').innerText = minimo.toFixed(2) + 'V';
-  document.getElementById('tensaoDigitada').innerText = tensaoInput.toFixed(2) + 'V';
+  document.getElementById('tensaoMinima').innerText = referencia.tensao.toFixed(2) + 'V';
+  document.getElementById('tensaoDigitada').innerText = tensao.toFixed(2) + 'V';
 
   const statusBox = document.getElementById('statusBox');
   const resultado = document.getElementById('resultado');
 
-  if (tensaoInput >= minimo) {
+  if (tensao >= referencia.tensao) {
     statusBox.className = 'status ok';
     statusBox.innerText = 'BATERIA ACIMA DA TENSÃO MÍNIMA ACEITÁVEL';
     resultado.innerText = 'OK';
@@ -197,12 +196,13 @@ function atualizarDashboard() {
   }
 }
 
-document.getElementById('dataCarga').addEventListener('input', atualizarDashboard);
-document.getElementById('tensaoAtual').addEventListener('input', atualizarDashboard);
+document.getElementById('dataCarga')
+  .addEventListener('input', atualizarDashboard);
+document.getElementById('tensaoAtual')
+  .addEventListener('input', atualizarDashboard);
 
-dataCarga.oninput=tensaoAtual.oninput=atualizar;
-
-if('serviceWorker'in navigator){
+/* PWA */
+if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
 </script>
