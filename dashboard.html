@@ -162,28 +162,43 @@ new Chart(grafico,{
   options:{maintainAspectRatio:false}
 });
 
-function atualizar(){
-  const d=document.getElementById('dataCarga').value;
-  const v=parseFloat(tensaoAtual.value);
-  if(!d||isNaN(v))return;
+function atualizarDashboard() {
+  const dataInput = document.getElementById('dataCarga').value;
+  const tensaoInput = parseFloat(document.getElementById('tensaoAtual').value);
 
-  const dias=Math.floor((new Date()-new Date(d))/(86400000));
-  const ref=dados.reduce((a,b)=>Math.abs(b.dias-dias)<Math.abs(a.dias-dias)?b:a);
+  if (!dataInput || isNaN(tensaoInput)) return;
 
-  diasEl.textContent=dias;
-  tensaoMinima.textContent=ref.t.toFixed(2)+'V';
-  tensaoDigitada.textContent=v.toFixed(2)+'V';
+  const hoje = new Date();
+  const dataCarga = new Date(dataInput + 'T00:00:00');
+  const diferenca = hoje - dataCarga;
+  const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
 
-  if(v>=ref.t){
-    statusBox.className='status ok';
-    statusBox.textContent='BATERIA OK';
-    resultado.textContent='OK';
-  }else{
-    statusBox.className='status danger';
-    statusBox.textContent='TENSÃO ABAIXO DO MÍNIMO';
-    resultado.textContent='ALERTA';
+  const referencia = dados.reduce((a, b) =>
+    Math.abs(b.dias - dias) < Math.abs(a.dias - dias) ? b : a
+  );
+
+  const minimo = referencia.t;
+
+  document.getElementById('dias').innerText = dias;
+  document.getElementById('tensaoMinima').innerText = minimo.toFixed(2) + 'V';
+  document.getElementById('tensaoDigitada').innerText = tensaoInput.toFixed(2) + 'V';
+
+  const statusBox = document.getElementById('statusBox');
+  const resultado = document.getElementById('resultado');
+
+  if (tensaoInput >= minimo) {
+    statusBox.className = 'status ok';
+    statusBox.innerText = 'BATERIA ACIMA DA TENSÃO MÍNIMA ACEITÁVEL';
+    resultado.innerText = 'OK';
+  } else {
+    statusBox.className = 'status danger';
+    statusBox.innerText = 'BATERIA ABAIXO DA TENSÃO MÍNIMA ACEITÁVEL';
+    resultado.innerText = 'ALERTA';
   }
 }
+
+document.getElementById('dataCarga').addEventListener('input', atualizarDashboard);
+document.getElementById('tensaoAtual').addEventListener('input', atualizarDashboard);
 
 dataCarga.oninput=tensaoAtual.oninput=atualizar;
 
